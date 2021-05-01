@@ -1,9 +1,11 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import counterReducer from '../features/counter/counterSlice';
+import riskSelectorReducer from '../features/risk-selector/riskSelectorSlice';
 
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
+    riskSelector: riskSelectorReducer
   },
 });
 
