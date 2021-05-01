@@ -1,0 +1,72 @@
+{
+  "1": {
+    "bonds": 80,
+    "largeCap": 20,
+    "midCaps": 0,
+    "foreign": 0,
+    "smallCap": 0
+  },
+  "2": {
+    "bonds": 70,
+    "largeCap": 15,
+    "midCaps": 15,
+    "foreign": 0,
+    "smallCap": 0
+  },
+  "3": {
+    "bonds": 60,
+    "largeCap": 15,
+    "midCaps": 15,
+    "foreign": 10,
+    "smallCap": 0
+  },
+  "4": {
+    "bonds": 50,
+    "largeCap": 20,
+    "midCaps": 20,
+    "foreign": 10,
+    "smallCap": 0
+  },
+  "5": {
+    "bonds": 40,
+    "largeCap": 20,
+    "midCaps": 20,
+    "foreign": 20,
+    "smallCap": 0
+  },
+  "6": {
+    "bonds": 35,
+    "largeCap": 25,
+    "midCaps": 5,
+    "foreign": 30,
+    "smallCap": 5
+  },
+  "7": {
+    "bonds": 20,
+    "largeCap": 25,
+    "midCaps": 25,
+    "foreign": 25,
+    "smallCap": 5
+  },
+  "8": {
+    "bonds": 10,
+    "largeCap": 20,
+    "midCaps": 40,
+    "foreign": 20,
+    "smallCap": 10
+  },
+  "9": {
+    "bonds": 5,
+    "largeCap": 15,
+    "midCaps": 40,
+    "foreign": 25,
+    "smallCap": 15
+  },
+  "10": {
+    "bonds": 0,
+    "largeCap": 5,
+    "midCaps": 25,
+    "foreign": 30,
+    "smallCap": 40
+  }
+}

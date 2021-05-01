@@ -1,57 +1,64 @@
 import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import style from './App.module.scss';
 
-function App() {
+import risks from './local/risk_levels.json';
+
+interface Risk {
+  bonds: number,
+  largeCap: number,
+  midCaps: number,
+  foreign: number,
+  smallCap: number,
+}
+
+function App(): JSX.Element {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
+    <main className={style.app}>
+      <header className={style.header}>
+        <h1>Financial Advisor</h1>
       </header>
-    </div>
+      <div className={style.riskSelectorContainer}>
+        <div className={style.headerLabels}>
+          <p className={style.labelSelect}>
+            Please select a risk level for your investment portfolio
+          </p>
+          <div className={style.levels}>
+            <p>Low</p>
+            <p>High</p>
+          </div>
+        </div>
+        <div className={style.riskSelector}>
+          <ul className={style.riskSelectorUl}>
+            {new Array(10)
+              .fill(0)
+              .map((v, i:number)=> <li>{i+1}</li>)}
+          </ul>
+        </div>
+        <div className={style.tableContainer}>
+          <table className={style.table}>
+            <tbody>
+            <tr>
+              <th>Risk</th>
+              <th>Bonds %</th>
+              <th>Large Cap %</th>
+              <th>Mid Cap %</th>
+              <th>Foreign %</th>
+              <th>Small Cap %</th>
+            </tr>
+            {Object.values(risks).map((v: Risk, i:number) =>
+            <tr>
+              <td>{i+1}</td>
+              <td>{v.bonds}</td>
+              <td>{v.largeCap}</td>
+              <td>{v.midCaps}</td>
+              <td>{v.foreign}</td>
+              <td>{v.smallCap}</td>
+            </tr>)}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
   );
 }
 

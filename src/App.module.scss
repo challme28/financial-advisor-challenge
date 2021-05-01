@@ -1,0 +1,95 @@
+main.app {
+}
+
+header.header {
+  background-color: #0084bf;
+  background-image: linear-gradient(45deg, #0084bf, #0c8996);
+  text-align: center;
+  margin-bottom: 20px;
+
+  h1 {
+    font-size: 56px;
+    line-height: 60px;
+    color: rgba(255, 255, 255, 0.85);
+    padding: 20px 0;
+    margin: 0;
+    font-weight: 400;
+  }
+}
+
+div.riskSelectorContainer {
+
+  div.headerLabels {
+    max-width: 700px;
+    margin: auto;
+    text-align: center;
+
+    p.labelSelect {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    div.levels {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      p {
+        margin: 8px 0;
+      }
+    }
+  }
+
+  div.riskSelector {
+    margin-bottom: 20px;
+
+    ul.riskSelectorUl {
+      display: flex;
+      justify-content: center;
+      margin: 0;
+      padding: 0;
+      border: none;
+
+      li {
+        width: 60px;
+        height: 60px;
+        box-sizing: border-box;
+        background-color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: black;
+        border: 2px solid black;
+        border-radius: 5px;
+        margin: 2px;
+        font-size: 28px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  div.tableContainer {
+    table.table {
+      background-color: white;
+      margin: auto;
+      border-spacing: 0;
+
+      th, td {
+        border: 1px solid #f3f3f3;
+        line-height: 32px;
+      }
+
+      th {
+        width: 128px;
+
+        &:first-of-type {
+          width: 64px;
+        }
+      }
+
+      td {
+        text-align: center;
+      }
+    }
+  }
+}
