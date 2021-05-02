@@ -1,8 +1,6 @@
 div.riskSelectorContainer {
 
   div.headerLabels {
-    max-width: 700px;
-    margin: auto;
     text-align: center;
 
     p.labelSelect {
@@ -11,12 +9,14 @@ div.riskSelectorContainer {
     }
 
     div.levels {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
+      width: 640px;
 
-      p {
-        margin: 8px 0;
+      div.low {
+        text-align: left;
+      }
+
+      div.high {
+        text-align: right;
       }
     }
   }
@@ -54,14 +54,16 @@ div.riskSelectorContainer {
   }
 
   div.tableContainer {
+    margin-bottom: 20px;
+
     table.table {
       background-color: white;
       margin: auto;
       border-spacing: 0;
+      width: unset;
 
       th, td {
         border: 1px solid #f3f3f3;
-        line-height: 32px;
       }
 
       tr.selected {
@@ -78,6 +80,18 @@ div.riskSelectorContainer {
 
       td {
         text-align: center;
+      }
+    }
+
+    svg {
+      margin: 40px;
+
+      text {
+        z-index: 10;
+      }
+
+      path {
+        z-index: -2;
       }
     }
   }

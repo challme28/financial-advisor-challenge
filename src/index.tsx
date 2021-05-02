@@ -1,15 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
+import 'foundation-sites/dist/css/foundation.min.css';
 import App from './App';
-import { store } from './app/store';
-import { Provider } from 'react-redux';
+import {store} from './app/store';
+import {Provider} from 'react-redux';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <App/>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

@@ -1,34 +1,68 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import {Button, Cell, Grid, Sizes} from "react-foundation";
+import PieSVG from "./Pie/PieSVG";
 
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {save, selectRiskSelection} from "./riskSelectorSlice";
 
 import style from './RiskSelector.module.scss';
-import risks from "../../local/risk_levels.json";
+import risks_levels from "../../local/risk_levels.json";
 
 interface Risk {
-  bonds: number,
-  largeCap: number,
-  midCaps: number,
-  foreign: number,
-  smallCap: number,
+  "Bonds": number,
+  "Large Cap": number,
+  "Mid Caps": number,
+  "Foreign": number,
+  "Small Cap": number,
 }
 
-export function RiskSelector(): JSX.Element {
+export interface Data {
+  label: string,
+  value: number,
+}
+
+interface Props {
+  continue: () => void,
+}
+
+export function RiskSelector(props: Props): JSX.Element {
   const riskSelection = useAppSelector(selectRiskSelection);
   const dispatch = useAppDispatch();
+  const risksValues = Object.values(risks_levels);
+  const risks: Record<string, Record<string, number>> = risks_levels;
+  const [data, setData] = useState<Data[]>();
+
+  const width = 450, height = 450, margin = 40;
+  const radius = Math.min(width, height) / 2 - margin;
+
+  useEffect(
+    () => {
+      if (typeof riskSelection !== "undefined") {
+        setData(Object.keys(risks[riskSelection]).map((k: string) => ({
+          label: k,
+          value: risks[riskSelection][k]
+        })));
+      }
+    },
+    [riskSelection, risks]
+  )
 
   return (
     <div className={style.riskSelectorContainer}>
-      <div className={style.headerLabels}>
-        <p className={style.labelSelect}>
-          Please select a risk level for your investment portfolio
-        </p>
-        <div className={style.levels}>
-          <p>Low</p>
-          <p>High</p>
-        </div>
-      </div>
+      <Grid
+        className={style.headerLabels}
+        centerAlign
+      >
+        <Cell small={12}>
+          <p className={style.labelSelect}>
+            Please select a risk level for your investment portfolio
+          </p>
+        </Cell>
+        <Grid className={style.levels}>
+          <Cell className={style.low} small={6}>Low</Cell>
+          <Cell className={style.high} small={6}>High</Cell>
+        </Grid>
+      </Grid>
       <div className={style.riskSelector}>
         <ul className={style.riskSelectorUl}>
           {new Array(10)
@@ -37,12 +71,16 @@ export function RiskSelector(): JSX.Element {
               <li
                 className={(riskSelection === i + 1) ? style.selected : ""}
                 onClick={() => dispatch(save({riskSelection: i + 1}))}
+                key={i}
               >
                 {i + 1}
               </li>)}
         </ul>
       </div>
-      <div className={style.tableContainer}>
+      <Grid
+        className={style.tableContainer}
+        centerAlign
+      >
         <table className={style.table}>
           <tbody>
           <tr>
@@ -53,18 +91,38 @@ export function RiskSelector(): JSX.Element {
             <th>Foreign %</th>
             <th>Small Cap %</th>
           </tr>
-          {Object.values(risks).map((v: Risk, i: number) =>
-            <tr className={(riskSelection === i + 1) ? style.selected : ""}>
+          {risksValues.map((v: Risk, i: number) =>
+            <tr
+              className={(riskSelection === i + 1) ? style.selected : ""}
+              key={i}
+            >
               <td>{i + 1}</td>
-              <td>{v.bonds}</td>
-              <td>{v.largeCap}</td>
-              <td>{v.midCaps}</td>
-              <td>{v.foreign}</td>
-              <td>{v.smallCap}</td>
+              <td>{v.Bonds}</td>
+              <td>{v["Large Cap"]}</td>
+              <td>{v["Mid Caps"]}</td>
+              <td>{v.Foreign}</td>
+              <td>{v["Small Cap"]}</td>
             </tr>)}
           </tbody>
         </table>
-      </div>
+        {data &&
+        <PieSVG
+            data={data}
+            width={width}
+            height={height}
+            innerRadius={100}
+            outerRadius={radius}
+        />}
+      </Grid>
+      <Grid centerAlign>
+        <Button
+          isDisabled={!riskSelection}
+          size={Sizes.LARGE}
+          onClick={props.continue}
+        >
+          Continue
+        </Button>
+      </Grid>
     </div>
   )
 }
