@@ -1,0 +1,112 @@
+div.portfolioContainer {
+  padding: 0 24px;
+
+  div.gridContainer {
+    div.label {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 600;
+    }
+
+    div {
+
+      p.riskLabel {
+        font-size: 22px;
+        font-weight: 600;
+      }
+
+      table.riskTable {
+        border-spacing: 0;
+
+        th, td {
+          border: 1px solid #f3f3f3;
+        }
+
+        td {
+          text-align: right;
+        }
+      }
+
+      div.currentInvestmentContainer {
+        padding-bottom: 20px;
+
+        p.currentInvestmentLabel {
+          font-size: 22px;
+          font-weight: 600;
+          margin-bottom: 0;
+        }
+
+        button {
+          margin-bottom: 0;
+
+        }
+      }
+
+      div.riskCalculatorContainer {
+        font-size: 17px;
+        background: white;
+        border: 1px solid #e9e9e9;
+        border-radius: 2px;
+
+        div.riskCalculatorInputLabels {
+          text-align: center;
+          background: #f9f9f9;
+          border-bottom: 1px solid #e9e9e9;
+          font-weight: 600;
+          padding: 10px 0;
+        }
+
+        div.riskCalculatorMain {
+
+          input {
+            margin-bottom: 0;
+            text-align: right;
+            border: 1px solid black;
+            border-radius: 5px;
+            font-size: 12px;
+            height: 31px;
+          }
+
+          div.riskCalculatorRow {
+            padding: 4px 16px;
+            align-items: center;
+
+            div.riskCalculatorInput {
+              padding: 4px;
+
+              input.green {
+                color: green;
+              }
+
+              input.red {
+                color: red;
+              }
+            }
+          }
+        }
+
+        div.riskCalculatorTransfer {
+          display: flex;
+
+          div.riskCalculatorTransferWrap {
+            flex-grow: 1;
+            border: 1px solid grey;
+            border-radius: 5px;
+            margin: 10px;
+
+            p {
+              padding: 9px;
+              font-size: 14px;
+              white-space: pre-wrap;
+              margin-bottom: 0;
+
+              &.red {
+                color: red;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

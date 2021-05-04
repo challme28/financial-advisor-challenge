@@ -8,7 +8,7 @@ import {save, selectRiskSelection} from "./riskSelectorSlice";
 import style from './RiskSelector.module.scss';
 import risks_levels from "../../local/risk_levels.json";
 
-interface Risk {
+export interface Risk {
   "Bonds": number,
   "Large Cap": number,
   "Mid Caps": number,
@@ -91,17 +91,17 @@ export function RiskSelector(props: Props): JSX.Element {
             <th>Foreign %</th>
             <th>Small Cap %</th>
           </tr>
-          {risksValues.map((v: Risk, i: number) =>
+          {risksValues.map((risk: Risk, i: number) =>
             <tr
               className={(riskSelection === i + 1) ? style.selected : ""}
               key={i}
             >
               <td>{i + 1}</td>
-              <td>{v.Bonds}</td>
-              <td>{v["Large Cap"]}</td>
-              <td>{v["Mid Caps"]}</td>
-              <td>{v.Foreign}</td>
-              <td>{v["Small Cap"]}</td>
+              <td>{risk.Bonds}</td>
+              <td>{risk["Large Cap"]}</td>
+              <td>{risk["Mid Caps"]}</td>
+              <td>{risk.Foreign}</td>
+              <td>{risk["Small Cap"]}</td>
             </tr>)}
           </tbody>
         </table>
