@@ -1,17 +1,21 @@
-import React from "react";
-import * as d3 from "d3";
-import {Data} from "../RiskSelector";
-import {PieArcDatum} from "d3";
+import React from 'react';
+import * as d3 from 'd3';
+import {Data} from '../RiskSelector';
+import {PieArcDatum} from 'd3';
 
-const Arc = ({data, index, createArc, colors}:
-               {
-                 data: PieArcDatum<Data>,
-                 index: number,
-                 createArc: any,
-                 colors: (arg0: any) => string | undefined,
-               }) => (
+const Arc = ({
+  data,
+  index,
+  createArc,
+  colors,
+}: {
+  data: PieArcDatum<Data>;
+  index: number;
+  createArc: any;
+  colors: (arg0: any) => string | undefined;
+}) => (
   <g key={index} className="arc">
-    <path className="arc" d={createArc(data)} fill={colors(index)}/>
+    <path className="arc" d={createArc(data)} fill={colors(index)} />
     <text
       transform={`translate(${createArc.centroid(data)})`}
       textAnchor="middle"
@@ -29,10 +33,10 @@ const Pie = (props: {
   data: Data[];
   width: number;
   height: number;
-}) => {
+}): JSX.Element => {
   const createPie = d3
     .pie<Data>()
-    .value(d => d.value)
+    .value((d) => d.value)
     .sort(null);
   const createArc = d3
     .arc()
@@ -46,17 +50,15 @@ const Pie = (props: {
       <g transform={`translate(${props.width / 2} ${props.height / 2})`}>
         {data
           .filter((d: PieArcDatum<Data>) => !!d.value)
-          .map((d: PieArcDatum<Data>, i) =>
-            (
-              <Arc
-                key={i}
-                data={d}
-                index={i}
-                createArc={createArc}
-                colors={colors}
-              />
-            )
-          )}
+          .map((d: PieArcDatum<Data>, i) => (
+            <Arc
+              key={i}
+              data={d}
+              index={i}
+              createArc={createArc}
+              colors={colors}
+            />
+          ))}
       </g>
     </svg>
   );
