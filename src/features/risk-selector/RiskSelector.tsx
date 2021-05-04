@@ -2,8 +2,10 @@ import React, {useEffect, useState} from 'react';
 import {Button, Cell, Grid, Sizes} from 'react-foundation';
 import PieSVG from './Pie/PieSVG';
 
-import {useAppDispatch, useAppSelector} from '../../app/hooks';
-import {save, selectRiskSelection} from './riskSelectorSlice';
+import {useAppSelector} from '../../utils/redux/hooks';
+import {useActions} from '../../utils/redux';
+import {selectRiskSelection} from './riskSelectorSlice';
+import {actions as riskSelectorActions} from './riskSelectorSlice';
 
 import style from './RiskSelector.module.scss';
 import risks_levels from '../../local/risk_levels.json';
@@ -27,7 +29,7 @@ interface Props {
 
 export function RiskSelector(props: Props): JSX.Element {
   const riskSelection = useAppSelector(selectRiskSelection);
-  const dispatch = useAppDispatch();
+  const {save} = useActions({...riskSelectorActions});
   const risksValues = Object.values(risks_levels);
   const risks: Record<string, Record<string, number>> = risks_levels;
   const [data, setData] = useState<Data[]>();
@@ -70,7 +72,7 @@ export function RiskSelector(props: Props): JSX.Element {
           {new Array(10).fill(0).map((v, i: number) => (
             <li
               className={Number(riskSelection) === i + 1 ? style.selected : ''}
-              onClick={() => dispatch(save({riskSelection: `${i + 1}`}))}
+              onClick={() => save({riskSelection: `${i + 1}`})}
               key={i}
             >
               {i + 1}

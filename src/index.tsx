@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.scss';
-import 'foundation-sites/dist/css/foundation.min.css';
 import App from './App';
-import {store} from './app/store';
+import {store} from './utils/redux/store';
 import {Provider} from 'react-redux';
 import * as serviceWorker from './serviceWorker';
+
+import './index.scss';
+import 'foundation-sites/dist/css/foundation.min.css';
 
 ReactDOM.render(
   <React.StrictMode>

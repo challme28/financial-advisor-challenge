@@ -2,7 +2,7 @@ import React, {ChangeEvent, useEffect, useState} from 'react';
 import {Button, Cell, Grid} from 'react-foundation';
 import {Risk} from '../risk-selector/RiskSelector';
 
-import {useAppSelector} from '../../app/hooks';
+import {useAppSelector} from '../../utils/redux/hooks';
 import {selectRiskSelection} from '../risk-selector/riskSelectorSlice';
 
 import style from './Portfolio.module.scss';

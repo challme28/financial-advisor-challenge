@@ -1,13 +1,14 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {RootState} from '../../app/store';
+import {GenericActionPayload} from '../../utils/redux';
+import {RootState} from '../../utils/redux/store';
 
 export interface RiskSelectorState {
   riskSelection?: string;
 }
 
-export interface RiskSelectorAction {
+export type RiskSelectorAction = GenericActionPayload & {
   riskSelection: string;
-}
+};
 
 const initialState: RiskSelectorState = {};
 
@@ -24,7 +25,7 @@ export const riskSelectorSlice = createSlice({
   },
 });
 
-export const {save} = riskSelectorSlice.actions;
+export const {actions} = riskSelectorSlice;
 
 export const selectRiskSelection = (state: RootState): string | undefined =>
   state.riskSelector.riskSelection;
