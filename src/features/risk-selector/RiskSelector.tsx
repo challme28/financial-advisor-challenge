@@ -10,18 +10,21 @@ import {actions as riskSelectorActions} from './riskSelectorSlice';
 import style from './RiskSelector.module.scss';
 import risks_levels from '../../local/risk_levels.json';
 
-export interface Risk {
-  Bonds: number;
-  'Large Cap': number;
-  'Mid Caps': number;
-  Foreign: number;
-  'Small Cap': number;
-}
+export type Category =
+  | 'bonds'
+  | 'large_cap'
+  | 'mid_caps'
+  | 'foreign'
+  | 'small_cap';
 
-export interface Data {
+export type Data = {
   label: string;
   value: number;
-}
+};
+
+export type Risk = {
+  [key: string]: Record<Category, Data>;
+};
 
 interface Props {
   continue: () => void;
@@ -30,8 +33,8 @@ interface Props {
 export function RiskSelector(props: Props): JSX.Element {
   const riskSelection = useAppSelector(selectRiskSelection);
   const {save} = useActions({...riskSelectorActions});
-  const risksValues = Object.values(risks_levels);
-  const risks: Record<string, Record<string, number>> = risks_levels;
+  const risks: Risk = risks_levels;
+  const riskValues = Object.values(risks);
   const [data, setData] = useState<Data[]>();
 
   const width = 450,
@@ -41,12 +44,7 @@ export function RiskSelector(props: Props): JSX.Element {
 
   useEffect(() => {
     if (typeof riskSelection !== 'undefined') {
-      setData(
-        Object.keys(risks[riskSelection]).map((k: string) => ({
-          label: k,
-          value: risks[riskSelection][k],
-        }))
-      );
+      setData(Object.values(risks[riskSelection]));
     }
   }, [riskSelection, risks]);
 
@@ -91,7 +89,7 @@ export function RiskSelector(props: Props): JSX.Element {
               <th>Foreign %</th>
               <th>Small Cap %</th>
             </tr>
-            {risksValues.map((risk: Risk, i: number) => (
+            {riskValues.map((risk: Record<Category, Data>, i) => (
               <tr
                 className={
                   Number(riskSelection) === i + 1 ? style.selected : ''
@@ -99,11 +97,11 @@ export function RiskSelector(props: Props): JSX.Element {
                 key={i}
               >
                 <td>{i + 1}</td>
-                <td>{risk.Bonds}</td>
-                <td>{risk['Large Cap']}</td>
-                <td>{risk['Mid Caps']}</td>
-                <td>{risk.Foreign}</td>
-                <td>{risk['Small Cap']}</td>
+                <td>{risk.bonds.value}</td>
+                <td>{risk.large_cap.value}</td>
+                <td>{risk.mid_caps.value}</td>
+                <td>{risk.foreign.value}</td>
+                <td>{risk.small_cap.value}</td>
               </tr>
             ))}
           </tbody>

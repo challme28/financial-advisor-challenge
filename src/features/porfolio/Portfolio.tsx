@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import {Button, Cell, Grid} from 'react-foundation';
-import {Risk} from '../risk-selector/RiskSelector';
+import {Category, Data, Risk} from '../risk-selector/RiskSelector';
 
 import {useAppSelector} from '../../utils/redux/hooks';
 import {selectRiskSelection} from '../risk-selector/riskSelectorSlice';
@@ -8,15 +8,10 @@ import {selectRiskSelection} from '../risk-selector/riskSelectorSlice';
 import style from './Portfolio.module.scss';
 import risks_levels from '../../local/risk_levels.json';
 
-interface Diff {
-  key: string;
-  value: number;
-}
-
 export function Portfolio(): JSX.Element {
   const riskSelection = useAppSelector(selectRiskSelection);
-  const risks: Record<string, Risk> = risks_levels;
-  const riskSelected: Risk = risks[riskSelection || '0'];
+  const risks: Risk = risks_levels;
+  const riskSelected: Record<Category, Data> = risks[riskSelection || '0'];
 
   const [bonds, setBonds] = useState<string>('');
   const [largeCap, setLargeCap] = useState<string>('');
@@ -32,13 +27,13 @@ export function Portfolio(): JSX.Element {
   const [diffForeign, setDiffForeign] = useState<[string, number]>([' ', 0]);
   const [diffSmallCap, setDiffSmallCap] = useState<[string, number]>([' ', 0]);
 
-  const [message, setMessage] = useState<[boolean, string]>([false, '']);
-
   const [newBonds, setNewBonds] = useState<string>(' ');
   const [newLargeCap, setNewLargeCap] = useState<string>(' ');
   const [newMidCap, setNewMidCap] = useState<string>(' ');
   const [newForeign, setNewForeign] = useState<string>(' ');
   const [newSmallCap, setNewSmallCap] = useState<string>(' ');
+
+  const [message, setMessage] = useState<[boolean, string]>([false, '']);
 
   useEffect(() => {
     if (bonds && largeCap && midCap && foreign && smallCap) {
@@ -48,7 +43,7 @@ export function Portfolio(): JSX.Element {
     }
   }, [bonds, largeCap, midCap, foreign, smallCap]);
 
-  const getMessage = (negativeArray: Diff[], positiveArray: Diff[]) => {
+  const getMessage = (negativeArray: Data[], positiveArray: Data[]) => {
     let i = 0,
       j = 0;
     let currPosVal = positiveArray[0].value;
@@ -58,18 +53,18 @@ export function Portfolio(): JSX.Element {
       const sum = Math.round((currPosVal + currNegVal) * 100) / 100;
       if (sum > 0) {
         message += `• Transfer ${Math.abs(currNegVal)} from ${
-          negativeArray[j].key
-        } to ${positiveArray[i].key} \n`;
+          negativeArray[j].label
+        } to ${positiveArray[i].label} \n`;
         j++;
         if (j < negativeArray.length) currNegVal = negativeArray[j].value;
         currPosVal = sum;
       } else if (sum < 0) {
-        message += `• Transfer ${currPosVal} from ${negativeArray[j].key} to ${positiveArray[i].key} \n`;
+        message += `• Transfer ${currPosVal} from ${negativeArray[j].label} to ${positiveArray[i].label} \n`;
         i++;
         if (i < positiveArray.length) currPosVal = positiveArray[i].value;
         currNegVal = sum;
       } else {
-        message += `• Transfer ${currPosVal} from ${negativeArray[j].key} to ${positiveArray[i].key} \n`;
+        message += `• Transfer ${currPosVal} from ${negativeArray[j].label} to ${positiveArray[i].label} \n`;
         i++;
         j++;
         if (i < positiveArray.length) currPosVal = positiveArray[i].value;
@@ -78,6 +73,68 @@ export function Portfolio(): JSX.Element {
     }
     return message;
   };
+
+  function calculateTransfers(
+    _bonds: number,
+    _largeCap: number,
+    _midCap: number,
+    _foreign: number,
+    _smallCap: number
+  ) {
+    const total =
+      Math.round((_bonds + _largeCap + _midCap + _foreign + _smallCap) * 100) /
+      100;
+
+    setNewBonds(`${(total * riskSelected.bonds.value) / 100}`);
+    setNewLargeCap(`${(total * riskSelected.large_cap.value) / 100}`);
+    setNewMidCap(`${(total * riskSelected.mid_caps.value) / 100}`);
+    setNewForeign(`${(total * riskSelected.foreign.value) / 100}`);
+    setNewSmallCap(`${(total * riskSelected.small_cap.value) / 100}`);
+
+    const diffB =
+      Math.round(((total * riskSelected.bonds.value) / 100 - _bonds) * 100) /
+      100;
+    const diffL =
+      Math.round(
+        ((total * riskSelected.large_cap.value) / 100 - _largeCap) * 100
+      ) / 100;
+    const diffM =
+      Math.round(
+        ((total * riskSelected.mid_caps.value) / 100 - _midCap) * 100
+      ) / 100;
+    const diffF =
+      Math.round(
+        ((total * riskSelected.foreign.value) / 100 - _foreign) * 100
+      ) / 100;
+    const diffS =
+      Math.round(
+        ((total * riskSelected.small_cap.value) / 100 - _smallCap) * 100
+      ) / 100;
+
+    setDiffBonds([`${diffB < 0 ? '' : '+'}${diffB}`, diffB]);
+    setDiffLargeCap([`${diffL < 0 ? '' : '+'}${diffL}`, diffL]);
+    setDiffMidCap([`${diffM < 0 ? '' : '+'}${diffM}`, diffM]);
+    setDiffForeign([`${diffF < 0 ? '' : '+'}${diffF}`, diffF]);
+    setDiffSmallCap([`${diffS < 0 ? '' : '+'}${diffS}`, diffS]);
+
+    const negativeArray: Data[] = [];
+    const positiveArray: Data[] = [];
+    [
+      {label: 'Bonds', value: diffB},
+      {label: 'Large Cap', value: diffL},
+      {label: 'Mid Cap', value: diffM},
+      {label: 'foreign', value: diffF},
+      {label: 'Small Cap', value: diffS},
+    ].forEach((data: Data) => {
+      if (data.value === 0) return;
+      if (data.value < 0) negativeArray.push(data);
+      if (data.value > 0) positiveArray.push(data);
+    });
+    negativeArray.sort((a, b) => a.value - b.value);
+    positiveArray.sort((a, b) => b.value - a.value);
+
+    setMessage([false, getMessage(negativeArray, positiveArray)]);
+  }
 
   const rebalance = () => {
     const _bonds = Number(bonds);
@@ -93,64 +150,12 @@ export function Portfolio(): JSX.Element {
       isNaN(_smallCap)
     ) {
       setMessage([
-        false,
+        true,
         'Please use only positive digits or zero when entering current amounts. Please enter all inputs correctly.',
       ]);
       return;
     }
-    const total =
-      Math.round((_bonds + _largeCap + _midCap + _foreign + _smallCap) * 100) /
-      100;
-
-    setNewBonds(`${(total * riskSelected.Bonds) / 100}`);
-    setNewLargeCap(`${(total * riskSelected['Large Cap']) / 100}`);
-    setNewMidCap(`${(total * riskSelected['Mid Caps']) / 100}`);
-    setNewForeign(`${(total * riskSelected.Foreign) / 100}`);
-    setNewSmallCap(`${(total * riskSelected['Small Cap']) / 100}`);
-
-    const diffB =
-      Math.round(((total * riskSelected.Bonds) / 100 - Number(bonds)) * 100) /
-      100;
-    const diffL =
-      Math.round(
-        ((total * riskSelected['Large Cap']) / 100 - Number(largeCap)) * 100
-      ) / 100;
-    const diffM =
-      Math.round(
-        ((total * riskSelected['Mid Caps']) / 100 - Number(midCap)) * 100
-      ) / 100;
-    const diffF =
-      Math.round(
-        ((total * riskSelected.Foreign) / 100 - Number(foreign)) * 100
-      ) / 100;
-    const diffS =
-      Math.round(
-        ((total * riskSelected['Small Cap']) / 100 - Number(smallCap)) * 100
-      ) / 100;
-
-    setDiffBonds([`${diffB < 0 ? '' : '+'}${diffB}`, diffB]);
-    setDiffLargeCap([`${diffL < 0 ? '' : '+'}${diffL}`, diffL]);
-    setDiffMidCap([`${diffM < 0 ? '' : '+'}${diffM}`, diffM]);
-    setDiffForeign([`${diffF < 0 ? '' : '+'}${diffF}`, diffF]);
-    setDiffSmallCap([`${diffS < 0 ? '' : '+'}${diffS}`, diffS]);
-
-    const negativeArray: Diff[] = [];
-    const positiveArray: Diff[] = [];
-    [
-      {key: 'Bonds', value: diffB},
-      {key: 'Large Cap', value: diffL},
-      {key: 'Mid Cap', value: diffM},
-      {key: 'foreign', value: diffF},
-      {key: 'Small Cap', value: diffS},
-    ].forEach((diff: Diff) => {
-      if (diff.value === 0) return;
-      if (diff.value < 0) negativeArray.push(diff);
-      if (diff.value > 0) positiveArray.push(diff);
-    });
-    negativeArray.sort((a, b) => a.value - b.value);
-    positiveArray.sort((a, b) => b.value - a.value);
-
-    setMessage([false, getMessage(negativeArray, positiveArray)]);
+    calculateTransfers(_bonds, _largeCap, _midCap, _foreign, _smallCap);
   };
 
   return (
@@ -171,11 +176,11 @@ export function Portfolio(): JSX.Element {
                 <th>Small Cap</th>
               </tr>
               <tr>
-                <td>{riskSelected.Bonds}%</td>
-                <td>{riskSelected['Large Cap']}%</td>
-                <td>{riskSelected['Mid Caps']}%</td>
-                <td>{riskSelected.Foreign}%</td>
-                <td>{riskSelected['Small Cap']}%</td>
+                <td>{riskSelected.bonds.value}%</td>
+                <td>{riskSelected.large_cap.value}%</td>
+                <td>{riskSelected.mid_caps.value}%</td>
+                <td>{riskSelected.foreign.value}%</td>
+                <td>{riskSelected.small_cap.value}%</td>
               </tr>
             </tbody>
           </table>
