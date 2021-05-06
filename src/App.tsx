@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Grid} from 'react-foundation';
 
 import style from './App.module.scss';
@@ -8,15 +8,11 @@ import {RiskSelector} from './features/risk-selector/RiskSelector';
 import {Portfolio} from './features/porfolio/Portfolio';
 
 function App(): JSX.Element {
-  const [step, setStep] = React.useState(0);
+  const [step, setStep] = useState(0);
   return (
     <main className={style.app}>
       <Grid className={style.header} centerAlign>
-        <button
-          id="home-button"
-          className={style.headerHomeBtn}
-          onClick={() => setStep(0)}
-        >
+        <button className={style.headerHomeBtn} onClick={() => setStep(0)}>
           <img className={style.headerHome} src={home} alt="home button" />
         </button>
         <h1>Financial Advisor</h1>

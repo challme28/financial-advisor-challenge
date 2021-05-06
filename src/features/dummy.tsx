@@ -1,13 +1,14 @@
 import React from 'react';
+import {Grid} from 'react-foundation';
+
 import style from '../App.module.scss';
 import home from '../assets/image/home.png';
-import {Grid} from 'react-foundation';
+
 import {RiskSelector} from './risk-selector/RiskSelector';
 import {Portfolio} from './porfolio/Portfolio';
 
-export default function Dummy(): JSX.Element {
+function Dummy(): JSX.Element {
   const [step, setStep] = React.useState(0);
-
   return (
     <main className={style.app}>
       <Grid className={style.header} centerAlign>
@@ -25,3 +26,5 @@ export default function Dummy(): JSX.Element {
     </main>
   );
 }
+
+export default Dummy;
