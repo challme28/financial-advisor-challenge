@@ -11,7 +11,7 @@ import risks_levels from '../../local/risk_levels.json';
 export function Portfolio(): JSX.Element {
   const riskSelection = useAppSelector(selectRiskSelection);
   const risks: Risk = risks_levels;
-  const riskSelected: Record<Category, Data> = risks[riskSelection || '0'];
+  const riskSelected: Record<Category, Data> = risks[riskSelection || '1'];
 
   const [bonds, setBonds] = useState<string>('');
   const [largeCap, setLargeCap] = useState<string>('');
@@ -56,12 +56,12 @@ export function Portfolio(): JSX.Element {
           negativeArray[j].label
         } to ${positiveArray[i].label} \n`;
         j++;
-        if (j < negativeArray.length) currNegVal = negativeArray[j].value;
+        // if (j < negativeArray.length) currNegVal = negativeArray[j].value;
         currPosVal = sum;
       } else if (sum < 0) {
         message += `• Transfer ${currPosVal} from ${negativeArray[j].label} to ${positiveArray[i].label} \n`;
         i++;
-        if (i < positiveArray.length) currPosVal = positiveArray[i].value;
+        // if (i < positiveArray.length) currPosVal = positiveArray[i].value;
         currNegVal = sum;
       } else {
         message += `• Transfer ${currPosVal} from ${negativeArray[j].label} to ${positiveArray[i].label} \n`;
@@ -74,13 +74,13 @@ export function Portfolio(): JSX.Element {
     return message;
   };
 
-  function calculateTransfers(
+  const calculateTransfers = (
     _bonds: number,
     _largeCap: number,
     _midCap: number,
     _foreign: number,
     _smallCap: number
-  ) {
+  ) => {
     const total =
       Math.round((_bonds + _largeCap + _midCap + _foreign + _smallCap) * 100) /
       100;
@@ -133,27 +133,36 @@ export function Portfolio(): JSX.Element {
     negativeArray.sort((a, b) => a.value - b.value);
     positiveArray.sort((a, b) => b.value - a.value);
 
-    setMessage([false, getMessage(negativeArray, positiveArray)]);
-  }
+    if (negativeArray.length && positiveArray.length) {
+      setMessage([false, getMessage(negativeArray, positiveArray)]);
+    }
+  };
 
   const rebalance = () => {
-    const _bonds = Number(bonds);
-    const _largeCap = Number(largeCap);
-    const _midCap = Number(midCap);
-    const _foreign = Number(foreign);
-    const _smallCap = Number(smallCap);
+    const _bonds = Number(bonds ? bonds : undefined);
+    const _largeCap = Number(largeCap ? largeCap : undefined);
+    const _midCap = Number(midCap ? midCap : undefined);
+    const _foreign = Number(foreign ? foreign : undefined);
+    const _smallCap = Number(smallCap ? smallCap : undefined);
     if (
       isNaN(_bonds) ||
+      _bonds < 0 ||
       isNaN(_largeCap) ||
+      _largeCap < 0 ||
       isNaN(_midCap) ||
+      _midCap < 0 ||
       isNaN(_foreign) ||
-      isNaN(_smallCap)
+      _foreign < 0 ||
+      isNaN(_smallCap) ||
+      _smallCap < 0
     ) {
       setMessage([
         true,
         'Please use only positive digits or zero when entering current amounts. Please enter all inputs correctly.',
       ]);
       return;
+    } else {
+      setMessage([false, '']);
     }
     calculateTransfers(_bonds, _largeCap, _midCap, _foreign, _smallCap);
   };
@@ -211,7 +220,11 @@ export function Portfolio(): JSX.Element {
                   <Grid className={style.riskCalculatorRow}>
                     <Cell small={3}>Bonds $:</Cell>
                     <Cell small={3} className={style.riskCalculatorInput}>
+                      <label htmlFor="setBonds" hidden>
+                        setBonds
+                      </label>
                       <input
+                        id="setBonds"
                         onChange={(event: ChangeEvent<HTMLInputElement>) =>
                           setBonds(event.target.value)
                         }
@@ -219,7 +232,11 @@ export function Portfolio(): JSX.Element {
                       />
                     </Cell>
                     <Cell small={3} className={style.riskCalculatorInput}>
+                      <label htmlFor="diffBonds" hidden>
+                        diffBonds
+                      </label>
                       <input
+                        id="diffBonds"
                         disabled
                         type="text"
                         value={diffBonds[0]}
@@ -242,7 +259,11 @@ export function Portfolio(): JSX.Element {
                   <Grid className={style.riskCalculatorRow}>
                     <Cell small={3}>Large Cap $:</Cell>
                     <Cell small={3} className={style.riskCalculatorInput}>
+                      <label htmlFor="setLargeCap" hidden>
+                        setLargeCap
+                      </label>
                       <input
+                        id="setLargeCap"
                         onChange={(event: ChangeEvent<HTMLInputElement>) =>
                           setLargeCap(event.target.value)
                         }
@@ -250,7 +271,11 @@ export function Portfolio(): JSX.Element {
                       />
                     </Cell>
                     <Cell small={3} className={style.riskCalculatorInput}>
+                      <label htmlFor="diffLargeCap" hidden>
+                        diffLargeCap
+                      </label>
                       <input
+                        id="diffLargeCap"
                         disabled
                         type="text"
                         value={diffLargeCap[0]}
@@ -273,7 +298,11 @@ export function Portfolio(): JSX.Element {
                   <Grid className={style.riskCalculatorRow}>
                     <Cell small={3}>Mid Cap $:</Cell>
                     <Cell small={3} className={style.riskCalculatorInput}>
+                      <label htmlFor="setMidCap" hidden>
+                        setMidCap
+                      </label>
                       <input
+                        id="setMidCap"
                         onChange={(event: ChangeEvent<HTMLInputElement>) =>
                           setMidCap(event.target.value)
                         }
@@ -281,7 +310,11 @@ export function Portfolio(): JSX.Element {
                       />
                     </Cell>
                     <Cell small={3} className={style.riskCalculatorInput}>
+                      <label htmlFor="diffMidCap" hidden>
+                        diffMidCap
+                      </label>
                       <input
+                        id="diffMidCap"
                         disabled
                         type="text"
                         value={diffMidCap[0]}
@@ -304,7 +337,11 @@ export function Portfolio(): JSX.Element {
                   <Grid className={style.riskCalculatorRow}>
                     <Cell small={3}>Foreign $:</Cell>
                     <Cell small={3} className={style.riskCalculatorInput}>
+                      <label htmlFor="setForeign" hidden>
+                        setForeign
+                      </label>
                       <input
+                        id="setForeign"
                         onChange={(event: ChangeEvent<HTMLInputElement>) =>
                           setForeign(event.target.value)
                         }
@@ -312,7 +349,11 @@ export function Portfolio(): JSX.Element {
                       />
                     </Cell>
                     <Cell small={3} className={style.riskCalculatorInput}>
+                      <label htmlFor="diffForeign" hidden>
+                        diffForeign
+                      </label>
                       <input
+                        id="diffForeign"
                         disabled
                         type="text"
                         value={diffForeign[0]}
@@ -335,7 +376,11 @@ export function Portfolio(): JSX.Element {
                   <Grid className={style.riskCalculatorRow}>
                     <Cell small={3}>Small Cap $:</Cell>
                     <Cell small={3} className={style.riskCalculatorInput}>
+                      <label htmlFor="setSmallCap" hidden>
+                        setSmallCap
+                      </label>
                       <input
+                        id="setSmallCap"
                         onChange={(event: ChangeEvent<HTMLInputElement>) =>
                           setSmallCap(event.target.value)
                         }
@@ -343,7 +388,11 @@ export function Portfolio(): JSX.Element {
                       />
                     </Cell>
                     <Cell small={3} className={style.riskCalculatorInput}>
+                      <label htmlFor="diffSmallCap" hidden>
+                        diffSmallCap
+                      </label>
                       <input
+                        id="diffSmallCap"
                         disabled
                         type="text"
                         value={diffSmallCap[0]}
@@ -366,7 +415,12 @@ export function Portfolio(): JSX.Element {
             </Cell>
             <Cell small={4} className={style.riskCalculatorTransfer}>
               <div className={style.riskCalculatorTransferWrap}>
-                <p className={`${message[0] ? style.red : ''}`}>{message[1]}</p>
+                <p
+                  data-testid="message"
+                  className={`${message[0] ? style.red : ''}`}
+                >
+                  {message[1]}
+                </p>
               </div>
             </Cell>
           </Grid>
