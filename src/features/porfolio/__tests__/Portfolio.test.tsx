@@ -47,7 +47,6 @@ describe('Portfolio', () => {
       userEvent.type(screen.getByLabelText('setForeign'), '20');
       userEvent.type(screen.getByLabelText('setSmallCap'), '0');
       userEvent.click(screen.getByRole('button', {name: /rebalance/i}));
-      screen.debug(screen.getByTestId('message'));
       expect(screen.getByTestId('message')).toHaveTextContent('');
     });
 
