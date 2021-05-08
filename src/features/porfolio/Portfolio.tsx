@@ -1,6 +1,7 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import {Button, Cell, Grid} from 'react-foundation';
 import {Category, Data, Risk} from '../risk-selector/RiskSelector';
+import {getMessage} from '../utils';
 
 import {useAppSelector} from '../../utils/redux/hooks';
 import {selectRiskSelection} from '../risk-selector/riskSelectorSlice';
@@ -42,37 +43,6 @@ export function Portfolio(): JSX.Element {
       setDisabledRebalance(true);
     }
   }, [bonds, largeCap, midCap, foreign, smallCap]);
-
-  const getMessage = (negativeArray: Data[], positiveArray: Data[]) => {
-    let i = 0,
-      j = 0;
-    let currPosVal = positiveArray[0].value;
-    let currNegVal = negativeArray[0].value;
-    let message = '';
-    while (i < positiveArray.length && j < negativeArray.length) {
-      const sum = Math.round((currPosVal + currNegVal) * 100) / 100;
-      if (sum > 0) {
-        message += `• Transfer ${Math.abs(currNegVal)} from ${
-          negativeArray[j].label
-        } to ${positiveArray[i].label} \n`;
-        j++;
-        // if (j < negativeArray.length) currNegVal = negativeArray[j].value;
-        currPosVal = sum;
-      } else if (sum < 0) {
-        message += `• Transfer ${currPosVal} from ${negativeArray[j].label} to ${positiveArray[i].label} \n`;
-        i++;
-        // if (i < positiveArray.length) currPosVal = positiveArray[i].value;
-        currNegVal = sum;
-      } else {
-        message += `• Transfer ${currPosVal} from ${negativeArray[j].label} to ${positiveArray[i].label} \n`;
-        i++;
-        j++;
-        if (i < positiveArray.length) currPosVal = positiveArray[i].value;
-        if (j < negativeArray.length) currNegVal = negativeArray[j].value;
-      }
-    }
-    return message;
-  };
 
   const calculateTransfers = (
     _bonds: number,
@@ -167,39 +137,218 @@ export function Portfolio(): JSX.Element {
     calculateTransfers(_bonds, _largeCap, _midCap, _foreign, _smallCap);
   };
 
+  const riskTable = (
+    <table className={style.riskTable}>
+      <tbody>
+        <tr>
+          <th>Bonds</th>
+          <th>Large Cap</th>
+          <th>Mid Cap</th>
+          <th>Foreign</th>
+          <th>Small Cap</th>
+        </tr>
+        <tr>
+          <td>{riskSelected.bonds.value}%</td>
+          <td>{riskSelected.large_cap.value}%</td>
+          <td>{riskSelected.mid_caps.value}%</td>
+          <td>{riskSelected.foreign.value}%</td>
+          <td>{riskSelected.small_cap.value}%</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+
+  const bondsRow = (
+    <Grid className={style.riskCalculatorRow}>
+      <Cell small={3}>Bonds $:</Cell>
+      <Cell small={3} className={style.riskCalculatorInput}>
+        <label htmlFor="setBonds" hidden>
+          setBonds
+        </label>
+        <input
+          id="setBonds"
+          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+            setBonds(event.target.value)
+          }
+          type="text"
+        />
+      </Cell>
+      <Cell small={3} className={style.riskCalculatorInput}>
+        <label htmlFor="diffBonds" hidden>
+          diffBonds
+        </label>
+        <input
+          id="diffBonds"
+          disabled
+          type="text"
+          value={diffBonds[0]}
+          className={`${diffBonds[1] < 0 ? style.red : style.green}`}
+        />
+      </Cell>
+      <Cell small={3} className={style.riskCalculatorInput}>
+        <input disabled type="text" value={newBonds} className={style.blue} />
+      </Cell>
+    </Grid>
+  );
+
+  const largeCapRow = (
+    <Grid className={style.riskCalculatorRow}>
+      <Cell small={3}>Large Cap $:</Cell>
+      <Cell small={3} className={style.riskCalculatorInput}>
+        <label htmlFor="setLargeCap" hidden>
+          setLargeCap
+        </label>
+        <input
+          id="setLargeCap"
+          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+            setLargeCap(event.target.value)
+          }
+          type="text"
+        />
+      </Cell>
+      <Cell small={3} className={style.riskCalculatorInput}>
+        <label htmlFor="diffLargeCap" hidden>
+          diffLargeCap
+        </label>
+        <input
+          id="diffLargeCap"
+          disabled
+          type="text"
+          value={diffLargeCap[0]}
+          className={`${diffLargeCap[1] < 0 ? style.red : style.green}`}
+        />
+      </Cell>
+      <Cell small={3} className={style.riskCalculatorInput}>
+        <input
+          disabled
+          type="text"
+          value={newLargeCap}
+          className={style.blue}
+        />
+      </Cell>
+    </Grid>
+  );
+
+  const midCapRow = (
+    <Grid className={style.riskCalculatorRow}>
+      <Cell small={3}>Mid Cap $:</Cell>
+      <Cell small={3} className={style.riskCalculatorInput}>
+        <label htmlFor="setMidCap" hidden>
+          setMidCap
+        </label>
+        <input
+          id="setMidCap"
+          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+            setMidCap(event.target.value)
+          }
+          type="text"
+        />
+      </Cell>
+      <Cell small={3} className={style.riskCalculatorInput}>
+        <label htmlFor="diffMidCap" hidden>
+          diffMidCap
+        </label>
+        <input
+          id="diffMidCap"
+          disabled
+          type="text"
+          value={diffMidCap[0]}
+          className={`${diffMidCap[1] < 0 ? style.red : style.green}`}
+        />
+      </Cell>
+      <Cell small={3} className={style.riskCalculatorInput}>
+        <input disabled type="text" value={newMidCap} className={style.blue} />
+      </Cell>
+    </Grid>
+  );
+
+  const foreignRow = (
+    <Grid className={style.riskCalculatorRow}>
+      <Cell small={3}>Foreign $:</Cell>
+      <Cell small={3} className={style.riskCalculatorInput}>
+        <label htmlFor="setForeign" hidden>
+          setForeign
+        </label>
+        <input
+          id="setForeign"
+          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+            setForeign(event.target.value)
+          }
+          type="text"
+        />
+      </Cell>
+      <Cell small={3} className={style.riskCalculatorInput}>
+        <label htmlFor="diffForeign" hidden>
+          diffForeign
+        </label>
+        <input
+          id="diffForeign"
+          disabled
+          type="text"
+          value={diffForeign[0]}
+          className={`${diffForeign[1] < 0 ? style.red : style.green}`}
+        />
+      </Cell>
+      <Cell small={3} className={style.riskCalculatorInput}>
+        <input disabled type="text" value={newForeign} className={style.blue} />
+      </Cell>
+    </Grid>
+  );
+
+  const smallCapRow = (
+    <Grid className={style.riskCalculatorRow}>
+      <Cell small={3}>Small Cap $:</Cell>
+      <Cell small={3} className={style.riskCalculatorInput}>
+        <label htmlFor="setSmallCap" hidden>
+          setSmallCap
+        </label>
+        <input
+          id="setSmallCap"
+          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+            setSmallCap(event.target.value)
+          }
+          type="text"
+        />
+      </Cell>
+      <Cell small={3} className={style.riskCalculatorInput}>
+        <label htmlFor="diffSmallCap" hidden>
+          diffSmallCap
+        </label>
+        <input
+          id="diffSmallCap"
+          disabled
+          type="text"
+          value={diffSmallCap[0]}
+          className={`${diffSmallCap[1] < 0 ? style.red : style.green}`}
+        />
+      </Cell>
+      <Cell small={3} className={style.riskCalculatorInput}>
+        <input
+          disabled
+          type="text"
+          value={newSmallCap}
+          className={style.blue}
+        />
+      </Cell>
+    </Grid>
+  );
+
   return (
     <div className={style.portfolioContainer}>
       <Grid className={style.gridContainer} centerAlign>
         <Cell small={12} className={style.label}>
           Personalized portfolio
         </Cell>
-        <Cell small={12} medium={8} large={6} centerAlign>
+        <Cell small={12} medium={11} large={7} centerAlign>
           <p className={style.riskLabel}>Risk level {riskSelection}</p>
-          <table className={style.riskTable}>
-            <tbody>
-              <tr>
-                <th>Bonds</th>
-                <th>Large Cap</th>
-                <th>Mid Cap</th>
-                <th>Foreign</th>
-                <th>Small Cap</th>
-              </tr>
-              <tr>
-                <td>{riskSelected.bonds.value}%</td>
-                <td>{riskSelected.large_cap.value}%</td>
-                <td>{riskSelected.mid_caps.value}%</td>
-                <td>{riskSelected.foreign.value}%</td>
-                <td>{riskSelected.small_cap.value}%</td>
-              </tr>
-            </tbody>
-          </table>
+          {riskTable}
           <Grid className={style.currentInvestmentContainer}>
-            <Cell small={9} medium={10}>
+            <Cell medium={9}>
               <p className={style.currentInvestmentLabel}>
                 Please enter your current portfolio
               </p>
             </Cell>
-            <Cell small={3} medium={2}>
+            <Cell medium={3}>
               <Button isDisabled={disabledRebalance} onClick={rebalance}>
                 Rebalance
               </Button>
@@ -208,212 +357,48 @@ export function Portfolio(): JSX.Element {
           <Grid className={style.riskCalculatorContainer}>
             <Cell small={12} className={style.riskCalculatorInputLabels}>
               <Grid>
-                <Cell small={4}>Current Amount</Cell>
-                <Cell small={2}>Difference</Cell>
-                <Cell small={2}>New Amount</Cell>
-                <Cell small={4}>Recommended transfers</Cell>
+                <Cell small={6} medium={4}>
+                  Current Amount
+                </Cell>
+                <Cell small={3} medium={2}>
+                  Difference
+                </Cell>
+                <Cell small={3} medium={2}>
+                  New Amount
+                </Cell>
+                <Cell medium={4} hideOnlyFor="small">
+                  Recommended transfers
+                </Cell>
               </Grid>
             </Cell>
-            <Cell small={8} className={style.riskCalculatorMain}>
+            <Cell small={12} medium={8} className={style.riskCalculatorMain}>
               <Grid>
-                <Cell small={12}>
-                  <Grid className={style.riskCalculatorRow}>
-                    <Cell small={3}>Bonds $:</Cell>
-                    <Cell small={3} className={style.riskCalculatorInput}>
-                      <label htmlFor="setBonds" hidden>
-                        setBonds
-                      </label>
-                      <input
-                        id="setBonds"
-                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                          setBonds(event.target.value)
-                        }
-                        type="text"
-                      />
-                    </Cell>
-                    <Cell small={3} className={style.riskCalculatorInput}>
-                      <label htmlFor="diffBonds" hidden>
-                        diffBonds
-                      </label>
-                      <input
-                        id="diffBonds"
-                        disabled
-                        type="text"
-                        value={diffBonds[0]}
-                        className={`${
-                          diffBonds[1] < 0 ? style.red : style.green
-                        }`}
-                      />
-                    </Cell>
-                    <Cell small={3} className={style.riskCalculatorInput}>
-                      <input
-                        disabled
-                        type="text"
-                        value={newBonds}
-                        style={{color: 'blue'}}
-                      />
-                    </Cell>
-                  </Grid>
-                </Cell>
-                <Cell small={12}>
-                  <Grid className={style.riskCalculatorRow}>
-                    <Cell small={3}>Large Cap $:</Cell>
-                    <Cell small={3} className={style.riskCalculatorInput}>
-                      <label htmlFor="setLargeCap" hidden>
-                        setLargeCap
-                      </label>
-                      <input
-                        id="setLargeCap"
-                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                          setLargeCap(event.target.value)
-                        }
-                        type="text"
-                      />
-                    </Cell>
-                    <Cell small={3} className={style.riskCalculatorInput}>
-                      <label htmlFor="diffLargeCap" hidden>
-                        diffLargeCap
-                      </label>
-                      <input
-                        id="diffLargeCap"
-                        disabled
-                        type="text"
-                        value={diffLargeCap[0]}
-                        className={`${
-                          diffLargeCap[1] < 0 ? style.red : style.green
-                        }`}
-                      />
-                    </Cell>
-                    <Cell small={3} className={style.riskCalculatorInput}>
-                      <input
-                        disabled
-                        type="text"
-                        value={newLargeCap}
-                        style={{color: 'blue'}}
-                      />
-                    </Cell>
-                  </Grid>
-                </Cell>
-                <Cell small={12}>
-                  <Grid className={style.riskCalculatorRow}>
-                    <Cell small={3}>Mid Cap $:</Cell>
-                    <Cell small={3} className={style.riskCalculatorInput}>
-                      <label htmlFor="setMidCap" hidden>
-                        setMidCap
-                      </label>
-                      <input
-                        id="setMidCap"
-                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                          setMidCap(event.target.value)
-                        }
-                        type="text"
-                      />
-                    </Cell>
-                    <Cell small={3} className={style.riskCalculatorInput}>
-                      <label htmlFor="diffMidCap" hidden>
-                        diffMidCap
-                      </label>
-                      <input
-                        id="diffMidCap"
-                        disabled
-                        type="text"
-                        value={diffMidCap[0]}
-                        className={`${
-                          diffMidCap[1] < 0 ? style.red : style.green
-                        }`}
-                      />
-                    </Cell>
-                    <Cell small={3} className={style.riskCalculatorInput}>
-                      <input
-                        disabled
-                        type="text"
-                        value={newMidCap}
-                        style={{color: 'blue'}}
-                      />
-                    </Cell>
-                  </Grid>
-                </Cell>
-                <Cell small={12}>
-                  <Grid className={style.riskCalculatorRow}>
-                    <Cell small={3}>Foreign $:</Cell>
-                    <Cell small={3} className={style.riskCalculatorInput}>
-                      <label htmlFor="setForeign" hidden>
-                        setForeign
-                      </label>
-                      <input
-                        id="setForeign"
-                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                          setForeign(event.target.value)
-                        }
-                        type="text"
-                      />
-                    </Cell>
-                    <Cell small={3} className={style.riskCalculatorInput}>
-                      <label htmlFor="diffForeign" hidden>
-                        diffForeign
-                      </label>
-                      <input
-                        id="diffForeign"
-                        disabled
-                        type="text"
-                        value={diffForeign[0]}
-                        className={`${
-                          diffForeign[1] < 0 ? style.red : style.green
-                        }`}
-                      />
-                    </Cell>
-                    <Cell small={3} className={style.riskCalculatorInput}>
-                      <input
-                        disabled
-                        type="text"
-                        value={newForeign}
-                        style={{color: 'blue'}}
-                      />
-                    </Cell>
-                  </Grid>
-                </Cell>
-                <Cell small={12}>
-                  <Grid className={style.riskCalculatorRow}>
-                    <Cell small={3}>Small Cap $:</Cell>
-                    <Cell small={3} className={style.riskCalculatorInput}>
-                      <label htmlFor="setSmallCap" hidden>
-                        setSmallCap
-                      </label>
-                      <input
-                        id="setSmallCap"
-                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                          setSmallCap(event.target.value)
-                        }
-                        type="text"
-                      />
-                    </Cell>
-                    <Cell small={3} className={style.riskCalculatorInput}>
-                      <label htmlFor="diffSmallCap" hidden>
-                        diffSmallCap
-                      </label>
-                      <input
-                        id="diffSmallCap"
-                        disabled
-                        type="text"
-                        value={diffSmallCap[0]}
-                        className={`${
-                          diffSmallCap[1] < 0 ? style.red : style.green
-                        }`}
-                      />
-                    </Cell>
-                    <Cell small={3} className={style.riskCalculatorInput}>
-                      <input
-                        disabled
-                        type="text"
-                        value={newSmallCap}
-                        style={{color: 'blue'}}
-                      />
-                    </Cell>
-                  </Grid>
-                </Cell>
+                <Cell small={12}>{bondsRow}</Cell>
+                <Cell small={12}>{largeCapRow}</Cell>
+                <Cell small={12}>{midCapRow} </Cell>
+                <Cell small={12}>{foreignRow} </Cell>
+                <Cell small={12}>{smallCapRow} </Cell>
               </Grid>
             </Cell>
-            <Cell small={4} className={style.riskCalculatorTransfer}>
+            <Cell
+              hideOnlyFor="small"
+              medium={4}
+              className={style.riskCalculatorTransfer}
+            >
+              <div className={style.riskCalculatorTransferWrap}>
+                <p
+                  data-testid="message"
+                  className={`${message[0] ? style.red : ''}`}
+                >
+                  {message[1]}
+                </p>
+              </div>
+            </Cell>
+
+            <Cell hideFor="medium" className={style.riskCalculatorInputLabels}>
+              Recommended transfers
+            </Cell>
+            <Cell hideFor="medium" className={style.riskCalculatorTransfer}>
               <div className={style.riskCalculatorTransferWrap}>
                 <p
                   data-testid="message"

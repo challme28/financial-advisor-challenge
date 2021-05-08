@@ -36,11 +36,11 @@ export function RiskSelector(props: Props): JSX.Element {
   const risks: Risk = risks_levels;
   const riskValues = Object.values(risks);
   const [data, setData] = useState<Data[]>();
+  const [switchView, setSwitchView] = useState<boolean>(false);
 
-  const width = 450,
-    height = 450,
-    margin = 40;
-  const radius = Math.min(width, height) / 2 - margin;
+  const width = 350,
+    height = 350;
+  const radius = Math.min(width, height) / 2;
 
   useEffect(() => {
     if (typeof riskSelection !== 'undefined') {
@@ -79,51 +79,68 @@ export function RiskSelector(props: Props): JSX.Element {
         </ul>
       </div>
       <Grid className={style.tableContainer} centerAlign>
-        <table className={style.table}>
-          <tbody>
-            <tr>
-              <th>Risk</th>
-              <th>Bonds %</th>
-              <th>Large Cap %</th>
-              <th>Mid Cap %</th>
-              <th>Foreign %</th>
-              <th>Small Cap %</th>
-            </tr>
-            {riskValues.map((risk: Record<Category, Data>, i) => (
-              <tr
-                className={
-                  Number(riskSelection) === i + 1 ? style.selected : ''
-                }
-                key={i}
-              >
-                <td>{i + 1}</td>
-                <td>{risk.bonds.value}</td>
-                <td>{risk.large_cap.value}</td>
-                <td>{risk.mid_caps.value}</td>
-                <td>{risk.foreign.value}</td>
-                <td>{risk.small_cap.value}</td>
+        {!switchView && (
+          <table className={style.table}>
+            <tbody>
+              <tr>
+                <th>Risk</th>
+                <th>Bonds %</th>
+                <th>Large Cap %</th>
+                <th>Mid Cap %</th>
+                <th>Foreign %</th>
+                <th>Small Cap %</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        {data && (
+              {riskValues.map((risk: Record<Category, Data>, i) => (
+                <tr
+                  className={
+                    Number(riskSelection) === i + 1 ? style.selected : ''
+                  }
+                  key={i}
+                >
+                  <td>{i + 1}</td>
+                  <td>{risk.bonds.value}</td>
+                  <td>{risk.large_cap.value}</td>
+                  <td>{risk.mid_caps.value}</td>
+                  <td>{risk.foreign.value}</td>
+                  <td>{risk.small_cap.value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+        {data && switchView && (
           <PieSVG
             data={data}
             width={width}
             height={height}
-            innerRadius={100}
+            innerRadius={70}
             outerRadius={radius}
           />
         )}
       </Grid>
-      <Grid centerAlign>
-        <Button
-          isDisabled={!riskSelection}
-          size={Sizes.LARGE}
-          onClick={props.continue}
-        >
-          Continue
-        </Button>
+      <Grid centerAlign className={style.buttons}>
+        <Cell small={12} medium={6}>
+          <Grid centerAlign>
+            <Button
+              isDisabled={!riskSelection}
+              size={Sizes.LARGE}
+              onClick={props.continue}
+            >
+              Continue
+            </Button>
+          </Grid>
+        </Cell>
+        <Cell small={12} medium={6} centerAlign>
+          <Grid centerAlign>
+            <Button
+              isDisabled={!riskSelection}
+              size={Sizes.LARGE}
+              onClick={() => setSwitchView(!switchView)}
+            >
+              Switch view
+            </Button>
+          </Grid>
+        </Cell>
       </Grid>
     </div>
   );
