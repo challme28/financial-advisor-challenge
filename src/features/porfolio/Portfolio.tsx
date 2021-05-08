@@ -1,7 +1,13 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import {Button, Cell, Grid} from 'react-foundation';
 import {Category, Data, Risk} from '../risk-selector/RiskSelector';
-import {getMessage} from '../utils';
+import {
+  calculateDiffPortfolio,
+  calculateNewPortfolio,
+  getMessage,
+  sortPortfolio,
+  verifyUserPortfolio,
+} from '../utils';
 
 import {useAppSelector} from '../../utils/redux/hooks';
 import {selectRiskSelection} from '../risk-selector/riskSelectorSlice';
@@ -14,127 +20,112 @@ export function Portfolio(): JSX.Element {
   const risks: Risk = risks_levels;
   const riskSelected: Record<Category, Data> = risks[riskSelection || '1'];
 
-  const [bonds, setBonds] = useState<string>('');
-  const [largeCap, setLargeCap] = useState<string>('');
-  const [midCap, setMidCap] = useState<string>('');
-  const [foreign, setForeign] = useState<string>('');
-  const [smallCap, setSmallCap] = useState<string>('');
+  const [userPortfolio, setUserPortfolio] = useState<Record<Category, string>>({
+    bonds: '',
+    largeCap: '',
+    midCap: '',
+    foreign: '',
+    smallCap: '',
+  });
 
   const [disabledRebalance, setDisabledRebalance] = useState<boolean>(true);
 
-  const [diffBonds, setDiffBonds] = useState<[string, number]>([' ', 0]);
-  const [diffLargeCap, setDiffLargeCap] = useState<[string, number]>([' ', 0]);
-  const [diffMidCap, setDiffMidCap] = useState<[string, number]>([' ', 0]);
-  const [diffForeign, setDiffForeign] = useState<[string, number]>([' ', 0]);
-  const [diffSmallCap, setDiffSmallCap] = useState<[string, number]>([' ', 0]);
+  const [diffPortfolio, setDiffPortfolio] = useState<
+    Record<Category, [string, number]>
+  >({
+    bonds: [' ', 0],
+    largeCap: [' ', 0],
+    midCap: [' ', 0],
+    foreign: [' ', 0],
+    smallCap: [' ', 0],
+  });
 
-  const [newBonds, setNewBonds] = useState<string>(' ');
-  const [newLargeCap, setNewLargeCap] = useState<string>(' ');
-  const [newMidCap, setNewMidCap] = useState<string>(' ');
-  const [newForeign, setNewForeign] = useState<string>(' ');
-  const [newSmallCap, setNewSmallCap] = useState<string>(' ');
+  const [newPortfolio, setNewPortfolio] = useState<Record<Category, string>>({
+    bonds: ' ',
+    largeCap: ' ',
+    midCap: ' ',
+    foreign: ' ',
+    smallCap: ' ',
+  });
 
   const [message, setMessage] = useState<[boolean, string]>([false, '']);
 
+  const updateCategory = (e: ChangeEvent<HTMLInputElement>) =>
+    setUserPortfolio({
+      ...userPortfolio,
+      [e.target.name]: e.target.value,
+    });
+
   useEffect(() => {
-    if (bonds && largeCap && midCap && foreign && smallCap) {
+    if (
+      userPortfolio.bonds &&
+      userPortfolio.largeCap &&
+      userPortfolio.midCap &&
+      userPortfolio.foreign &&
+      userPortfolio.smallCap
+    ) {
       setDisabledRebalance(false);
     } else {
       setDisabledRebalance(true);
     }
-  }, [bonds, largeCap, midCap, foreign, smallCap]);
+  }, [
+    userPortfolio.bonds,
+    userPortfolio.largeCap,
+    userPortfolio.midCap,
+    userPortfolio.foreign,
+    userPortfolio.smallCap,
+  ]);
 
-  const calculateTransfers = (
-    _bonds: number,
-    _largeCap: number,
-    _midCap: number,
-    _foreign: number,
-    _smallCap: number
-  ) => {
+  const rebalance = () => {
+    const [failed, message, userPortfolioN] = verifyUserPortfolio(
+      userPortfolio
+    );
+    setMessage([failed, message]);
+    if (failed) return;
+
     const total =
-      Math.round((_bonds + _largeCap + _midCap + _foreign + _smallCap) * 100) /
-      100;
-
-    setNewBonds(`${(total * riskSelected.bonds.value) / 100}`);
-    setNewLargeCap(`${(total * riskSelected.large_cap.value) / 100}`);
-    setNewMidCap(`${(total * riskSelected.mid_caps.value) / 100}`);
-    setNewForeign(`${(total * riskSelected.foreign.value) / 100}`);
-    setNewSmallCap(`${(total * riskSelected.small_cap.value) / 100}`);
-
-    const diffB =
-      Math.round(((total * riskSelected.bonds.value) / 100 - _bonds) * 100) /
-      100;
-    const diffL =
       Math.round(
-        ((total * riskSelected.large_cap.value) / 100 - _largeCap) * 100
-      ) / 100;
-    const diffM =
-      Math.round(
-        ((total * riskSelected.mid_caps.value) / 100 - _midCap) * 100
-      ) / 100;
-    const diffF =
-      Math.round(
-        ((total * riskSelected.foreign.value) / 100 - _foreign) * 100
-      ) / 100;
-    const diffS =
-      Math.round(
-        ((total * riskSelected.small_cap.value) / 100 - _smallCap) * 100
+        (userPortfolioN.bonds +
+          userPortfolioN.largeCap +
+          userPortfolioN.midCap +
+          userPortfolioN.foreign +
+          userPortfolioN.smallCap) *
+          100
       ) / 100;
 
-    setDiffBonds([`${diffB < 0 ? '' : '+'}${diffB}`, diffB]);
-    setDiffLargeCap([`${diffL < 0 ? '' : '+'}${diffL}`, diffL]);
-    setDiffMidCap([`${diffM < 0 ? '' : '+'}${diffM}`, diffM]);
-    setDiffForeign([`${diffF < 0 ? '' : '+'}${diffF}`, diffF]);
-    setDiffSmallCap([`${diffS < 0 ? '' : '+'}${diffS}`, diffS]);
-
-    const negativeArray: Data[] = [];
-    const positiveArray: Data[] = [];
-    [
-      {label: 'Bonds', value: diffB},
-      {label: 'Large Cap', value: diffL},
-      {label: 'Mid Cap', value: diffM},
-      {label: 'foreign', value: diffF},
-      {label: 'Small Cap', value: diffS},
-    ].forEach((data: Data) => {
-      if (data.value === 0) return;
-      if (data.value < 0) negativeArray.push(data);
-      if (data.value > 0) positiveArray.push(data);
+    const diffPortfolio = calculateDiffPortfolio(
+      total,
+      userPortfolioN,
+      riskSelected
+    );
+    setDiffPortfolio({
+      bonds: diffPortfolio.bonds,
+      largeCap: diffPortfolio.largeCap,
+      midCap: diffPortfolio.midCap,
+      foreign: diffPortfolio.foreign,
+      smallCap: diffPortfolio.smallCap,
     });
-    negativeArray.sort((a, b) => a.value - b.value);
-    positiveArray.sort((a, b) => b.value - a.value);
+
+    const newPortfolio = calculateNewPortfolio(total, riskSelected);
+    setNewPortfolio({
+      bonds: newPortfolio.bonds,
+      largeCap: newPortfolio.largeCap,
+      midCap: newPortfolio.midCap,
+      foreign: newPortfolio.foreign,
+      smallCap: newPortfolio.smallCap,
+    });
+
+    const {positiveArray, negativeArray} = sortPortfolio(
+      diffPortfolio.bonds[1],
+      diffPortfolio.largeCap[1],
+      diffPortfolio.midCap[1],
+      diffPortfolio.foreign[1],
+      diffPortfolio.smallCap[1]
+    );
 
     if (negativeArray.length && positiveArray.length) {
       setMessage([false, getMessage(negativeArray, positiveArray)]);
     }
-  };
-
-  const rebalance = () => {
-    const _bonds = Number(bonds ? bonds : undefined);
-    const _largeCap = Number(largeCap ? largeCap : undefined);
-    const _midCap = Number(midCap ? midCap : undefined);
-    const _foreign = Number(foreign ? foreign : undefined);
-    const _smallCap = Number(smallCap ? smallCap : undefined);
-    if (
-      isNaN(_bonds) ||
-      _bonds < 0 ||
-      isNaN(_largeCap) ||
-      _largeCap < 0 ||
-      isNaN(_midCap) ||
-      _midCap < 0 ||
-      isNaN(_foreign) ||
-      _foreign < 0 ||
-      isNaN(_smallCap) ||
-      _smallCap < 0
-    ) {
-      setMessage([
-        true,
-        'Please use only positive digits or zero when entering current amounts. Please enter all inputs correctly.',
-      ]);
-      return;
-    } else {
-      setMessage([false, '']);
-    }
-    calculateTransfers(_bonds, _largeCap, _midCap, _foreign, _smallCap);
   };
 
   const riskTable = (
@@ -149,10 +140,10 @@ export function Portfolio(): JSX.Element {
         </tr>
         <tr>
           <td>{riskSelected.bonds.value}%</td>
-          <td>{riskSelected.large_cap.value}%</td>
-          <td>{riskSelected.mid_caps.value}%</td>
+          <td>{riskSelected.largeCap.value}%</td>
+          <td>{riskSelected.midCap.value}%</td>
           <td>{riskSelected.foreign.value}%</td>
-          <td>{riskSelected.small_cap.value}%</td>
+          <td>{riskSelected.smallCap.value}%</td>
         </tr>
       </tbody>
     </table>
@@ -167,9 +158,8 @@ export function Portfolio(): JSX.Element {
         </label>
         <input
           id="setBonds"
-          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            setBonds(event.target.value)
-          }
+          name="bonds"
+          onChange={updateCategory}
           type="text"
         />
       </Cell>
@@ -181,12 +171,17 @@ export function Portfolio(): JSX.Element {
           id="diffBonds"
           disabled
           type="text"
-          value={diffBonds[0]}
-          className={`${diffBonds[1] < 0 ? style.red : style.green}`}
+          value={diffPortfolio.bonds[0]}
+          className={`${diffPortfolio.bonds[1] < 0 ? style.red : style.green}`}
         />
       </Cell>
       <Cell small={3} className={style.riskCalculatorInput}>
-        <input disabled type="text" value={newBonds} className={style.blue} />
+        <input
+          disabled
+          type="text"
+          value={newPortfolio.bonds}
+          className={style.blue}
+        />
       </Cell>
     </Grid>
   );
@@ -200,9 +195,8 @@ export function Portfolio(): JSX.Element {
         </label>
         <input
           id="setLargeCap"
-          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            setLargeCap(event.target.value)
-          }
+          name="largeCap"
+          onChange={updateCategory}
           type="text"
         />
       </Cell>
@@ -214,15 +208,17 @@ export function Portfolio(): JSX.Element {
           id="diffLargeCap"
           disabled
           type="text"
-          value={diffLargeCap[0]}
-          className={`${diffLargeCap[1] < 0 ? style.red : style.green}`}
+          value={diffPortfolio.largeCap[0]}
+          className={`${
+            diffPortfolio.largeCap[1] < 0 ? style.red : style.green
+          }`}
         />
       </Cell>
       <Cell small={3} className={style.riskCalculatorInput}>
         <input
           disabled
           type="text"
-          value={newLargeCap}
+          value={newPortfolio.largeCap}
           className={style.blue}
         />
       </Cell>
@@ -238,9 +234,8 @@ export function Portfolio(): JSX.Element {
         </label>
         <input
           id="setMidCap"
-          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            setMidCap(event.target.value)
-          }
+          name="midCap"
+          onChange={updateCategory}
           type="text"
         />
       </Cell>
@@ -252,12 +247,17 @@ export function Portfolio(): JSX.Element {
           id="diffMidCap"
           disabled
           type="text"
-          value={diffMidCap[0]}
-          className={`${diffMidCap[1] < 0 ? style.red : style.green}`}
+          value={diffPortfolio.midCap[0]}
+          className={`${diffPortfolio.midCap[1] < 0 ? style.red : style.green}`}
         />
       </Cell>
       <Cell small={3} className={style.riskCalculatorInput}>
-        <input disabled type="text" value={newMidCap} className={style.blue} />
+        <input
+          disabled
+          type="text"
+          value={newPortfolio.midCap}
+          className={style.blue}
+        />
       </Cell>
     </Grid>
   );
@@ -271,9 +271,8 @@ export function Portfolio(): JSX.Element {
         </label>
         <input
           id="setForeign"
-          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            setForeign(event.target.value)
-          }
+          name="foreign"
+          onChange={updateCategory}
           type="text"
         />
       </Cell>
@@ -285,12 +284,19 @@ export function Portfolio(): JSX.Element {
           id="diffForeign"
           disabled
           type="text"
-          value={diffForeign[0]}
-          className={`${diffForeign[1] < 0 ? style.red : style.green}`}
+          value={diffPortfolio.foreign[0]}
+          className={`${
+            diffPortfolio.foreign[1] < 0 ? style.red : style.green
+          }`}
         />
       </Cell>
       <Cell small={3} className={style.riskCalculatorInput}>
-        <input disabled type="text" value={newForeign} className={style.blue} />
+        <input
+          disabled
+          type="text"
+          value={newPortfolio.foreign}
+          className={style.blue}
+        />
       </Cell>
     </Grid>
   );
@@ -304,9 +310,8 @@ export function Portfolio(): JSX.Element {
         </label>
         <input
           id="setSmallCap"
-          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            setSmallCap(event.target.value)
-          }
+          name="smallCap"
+          onChange={updateCategory}
           type="text"
         />
       </Cell>
@@ -318,15 +323,17 @@ export function Portfolio(): JSX.Element {
           id="diffSmallCap"
           disabled
           type="text"
-          value={diffSmallCap[0]}
-          className={`${diffSmallCap[1] < 0 ? style.red : style.green}`}
+          value={diffPortfolio.smallCap[0]}
+          className={`${
+            diffPortfolio.smallCap[1] < 0 ? style.red : style.green
+          }`}
         />
       </Cell>
       <Cell small={3} className={style.riskCalculatorInput}>
         <input
           disabled
           type="text"
-          value={newSmallCap}
+          value={newPortfolio.smallCap}
           className={style.blue}
         />
       </Cell>

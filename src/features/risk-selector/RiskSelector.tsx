@@ -10,12 +10,7 @@ import {actions as riskSelectorActions} from './riskSelectorSlice';
 import style from './RiskSelector.module.scss';
 import risks_levels from '../../local/risk_levels.json';
 
-export type Category =
-  | 'bonds'
-  | 'large_cap'
-  | 'mid_caps'
-  | 'foreign'
-  | 'small_cap';
+export type Category = 'bonds' | 'largeCap' | 'midCap' | 'foreign' | 'smallCap';
 
 export type Data = {
   label: string;
@@ -34,7 +29,7 @@ export function RiskSelector(props: Props): JSX.Element {
   const riskSelection = useAppSelector(selectRiskSelection);
   const {save} = useActions({...riskSelectorActions});
   const risks: Risk = risks_levels;
-  const riskValues = Object.values(risks);
+  const riskValues: Record<Category, Data>[] = Object.values(risks);
   const [data, setData] = useState<Data[]>();
   const [switchView, setSwitchView] = useState<boolean>(false);
 
@@ -99,10 +94,10 @@ export function RiskSelector(props: Props): JSX.Element {
                 >
                   <td>{i + 1}</td>
                   <td>{risk.bonds.value}</td>
-                  <td>{risk.large_cap.value}</td>
-                  <td>{risk.mid_caps.value}</td>
+                  <td>{risk.largeCap.value}</td>
+                  <td>{risk.midCap.value}</td>
                   <td>{risk.foreign.value}</td>
-                  <td>{risk.small_cap.value}</td>
+                  <td>{risk.smallCap.value}</td>
                 </tr>
               ))}
             </tbody>

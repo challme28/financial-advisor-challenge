@@ -4,19 +4,19 @@
       "label": "Bonds",
       "value": 80
     },
-    "large_cap": {
+    "largeCap": {
       "label": "Large Cap",
       "value": 20
     },
-    "mid_caps": {
-      "label": "Mid Caps",
+    "midCap": {
+      "label": "Mid Cap",
       "value": 0
     },
     "foreign": {
       "label": "Foreign",
       "value":  0
     },
-    "small_cap": {
+    "smallCap": {
       "label": "Small Cap",
       "value": 0
     }
@@ -26,19 +26,19 @@
       "label": "Bonds",
       "value": 70
     },
-    "large_cap": {
+    "largeCap": {
       "label": "Large Cap",
       "value": 15
     },
-    "mid_caps": {
-      "label": "Mid Caps",
+    "midCap": {
+      "label": "Mid Cap",
       "value": 15
     },
     "foreign": {
      "label": "Foreign",
       "value":  0
     },
-    "small_cap": {
+    "smallCap": {
       "label": "Small Cap",
       "value": 0
     }
@@ -48,19 +48,19 @@
       "label": "Bonds",
       "value": 60
     },
-    "large_cap": {
+    "largeCap": {
       "label": "Large Cap",
       "value": 15
     },
-    "mid_caps": {
-      "label": "Mid Caps",
+    "midCap": {
+      "label": "Mid Cap",
       "value": 15
     },
     "foreign": {
       "label": "Foreign",
       "value": 10
     },
-    "small_cap": {
+    "smallCap": {
       "label": "Small Cap",
       "value": 0
     }
@@ -70,19 +70,19 @@
       "label": "Bonds",
       "value": 50
     },
-    "large_cap": {
+    "largeCap": {
       "label": "Large Cap",
       "value": 20
     },
-    "mid_caps": {
-      "label": "Mid Caps",
+    "midCap": {
+      "label": "Mid Cap",
       "value": 20
     },
     "foreign": {
       "label": "Foreign",
       "value": 10
     },
-    "small_cap": {
+    "smallCap": {
       "label": "Small Cap",
       "value": 0
     }
@@ -92,19 +92,19 @@
       "label": "Bonds",
       "value": 40
     },
-    "large_cap": {
+    "largeCap": {
       "label": "Large Cap",
       "value": 20
     },
-    "mid_caps": {
-      "label": "Mid Caps",
+    "midCap": {
+      "label": "Mid Cap",
       "value": 20
     },
     "foreign": {
       "label": "Foreign",
       "value": 20
     },
-    "small_cap": {
+    "smallCap": {
       "label": "Small Cap",
       "value": 0
     }
@@ -114,19 +114,19 @@
       "label": "Bonds",
       "value": 35
     },
-    "large_cap": {
+    "largeCap": {
       "label": "Large Cap",
       "value": 25
     },
-    "mid_caps": {
-      "label": "Mid Caps",
+    "midCap": {
+      "label": "Mid Cap",
       "value": 5
     },
     "foreign": {
       "label": "Foreign",
       "value":  30
     },
-    "small_cap": {
+    "smallCap": {
       "label": "Small Cap",
       "value": 5
     }
@@ -136,19 +136,19 @@
       "label": "Bonds",
       "value": 20
     },
-    "large_cap": {
+    "largeCap": {
       "label": "Large Cap",
       "value": 25
     },
-    "mid_caps": {
-      "label": "Mid Caps",
+    "midCap": {
+      "label": "Mid Cap",
       "value": 25
     },
     "foreign": {
       "label": "Foreign",
       "value": 25
     },
-    "small_cap": {
+    "smallCap": {
       "label": "Small Cap",
       "value": 5
     }
@@ -158,19 +158,19 @@
       "label": "Bonds",
       "value": 10
     },
-    "large_cap": {
+    "largeCap": {
       "label": "Large Cap",
       "value": 20
     },
-    "mid_caps": {
-      "label": "Mid Caps",
+    "midCap": {
+      "label": "Mid Cap",
       "value": 40
     },
     "foreign": {
       "label": "Foreign",
       "value": 20
     },
-    "small_cap": {
+    "smallCap": {
       "label": "Small Cap",
       "value": 10
     }
@@ -180,19 +180,19 @@
       "label": "Bonds",
       "value": 5
     },
-    "large_cap": {
+    "largeCap": {
       "label": "Large Cap",
       "value": 15
     },
-    "mid_caps": {
-      "label": "Mid Caps",
+    "midCap": {
+      "label": "Mid Cap",
       "value": 40
     },
     "foreign": {
       "label": "Foreign",
       "value": 25
     },
-    "small_cap": {
+    "smallCap": {
       "label": "Small Cap",
       "value": 15
     }
@@ -202,19 +202,19 @@
       "label": "Bonds",
       "value": 0
     },
-    "large_cap": {
+    "largeCap": {
       "label": "Large Cap",
       "value": 5
     },
-    "mid_caps": {
-      "label": "Mid Caps",
+    "midCap": {
+      "label": "Mid Cap",
       "value": 25
     },
     "foreign": {
       "label": "Foreign",
       "value": 30
     },
-    "small_cap": {
+    "smallCap": {
       "label": "Small Cap",
       "value": 40
     }
