@@ -30,14 +30,18 @@ describe('Portfolio', () => {
     });
 
     it('should write portfolio values, rebalance and see transfer message', () => {
-      expect(screen.getByTestId('message')).not.toHaveTextContent(/transfer/i);
+      expect(screen.getAllByTestId('message')[0]).not.toHaveTextContent(
+        /transfer/i
+      );
       userEvent.type(screen.getByLabelText('setBonds'), '40.91');
       userEvent.type(screen.getByLabelText('setLargeCap'), '17.76');
       userEvent.type(screen.getByLabelText('setMidCap'), '60.12');
       userEvent.type(screen.getByLabelText('setForeign'), '39.32');
       userEvent.type(screen.getByLabelText('setSmallCap'), '10.27');
       userEvent.click(screen.getByRole('button', {name: /rebalance/i}));
-      expect(screen.getByTestId('message')).toHaveTextContent(/transfer/i);
+      expect(screen.getAllByTestId('message')[0]).toHaveTextContent(
+        /transfer/i
+      );
     });
 
     it('should have no message when values are exact', () => {
@@ -47,29 +51,37 @@ describe('Portfolio', () => {
       userEvent.type(screen.getByLabelText('setForeign'), '20');
       userEvent.type(screen.getByLabelText('setSmallCap'), '0');
       userEvent.click(screen.getByRole('button', {name: /rebalance/i}));
-      expect(screen.getByTestId('message')).toHaveTextContent('');
+      expect(screen.getAllByTestId('message')[0]).toHaveTextContent('');
     });
 
     it('should see error message for non numeric or negatives numbers', () => {
-      expect(screen.getByTestId('message')).not.toHaveTextContent(/transfer/i);
+      expect(screen.getAllByTestId('message')[0]).not.toHaveTextContent(
+        /transfer/i
+      );
       userEvent.type(screen.getByLabelText('setBonds'), '-9');
       userEvent.type(screen.getByLabelText('setLargeCap'), '9');
       userEvent.type(screen.getByLabelText('setMidCap'), '9');
       userEvent.type(screen.getByLabelText('setForeign'), '9');
       userEvent.type(screen.getByLabelText('setSmallCap'), '9');
       userEvent.click(screen.getByRole('button', {name: /rebalance/i}));
-      expect(screen.getByTestId('message')).toHaveTextContent(/please use/i);
+      expect(screen.getAllByTestId('message')[0]).toHaveTextContent(
+        /please use/i
+      );
     });
 
     it('should see error message for missing values', () => {
-      expect(screen.getByTestId('message')).not.toHaveTextContent(/transfer/i);
+      expect(screen.getAllByTestId('message')[0]).not.toHaveTextContent(
+        /transfer/i
+      );
       userEvent.type(screen.getByLabelText('setBonds'), '');
       userEvent.type(screen.getByLabelText('setLargeCap'), '');
       userEvent.type(screen.getByLabelText('setMidCap'), '');
       userEvent.type(screen.getByLabelText('setForeign'), '');
       userEvent.type(screen.getByLabelText('setSmallCap'), '');
       userEvent.click(screen.getByRole('button', {name: /rebalance/i}));
-      expect(screen.getByTestId('message')).toHaveTextContent(/please use/i);
+      expect(screen.getAllByTestId('message')[0]).toHaveTextContent(
+        /please use/i
+      );
     });
 
     it('should have negative difference for Bonds', () => {
