@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Cell, Grid, Sizes} from 'react-foundation';
-import PieSVG from './Pie/PieSVG';
+import DonutSVG from './Donut/DonutSVG';
 
 import {useAppSelector} from '../../utils/redux/hooks';
 import {useActions} from '../../utils/redux';
@@ -10,18 +10,16 @@ import {actions as riskSelectorActions} from './riskSelectorSlice';
 import style from './RiskSelector.module.scss';
 import risks_levels from '../../local/risk_levels.json';
 
-export interface Risk {
-  Bonds: number;
-  'Large Cap': number;
-  'Mid Caps': number;
-  Foreign: number;
-  'Small Cap': number;
-}
+export type Category = 'bonds' | 'largeCap' | 'midCap' | 'foreign' | 'smallCap';
 
-export interface Data {
+export type Data = {
   label: string;
   value: number;
-}
+};
+
+export type Risk = {
+  [key: string]: Record<Category, Data>;
+};
 
 interface Props {
   continue: () => void;
@@ -30,23 +28,20 @@ interface Props {
 export function RiskSelector(props: Props): JSX.Element {
   const riskSelection = useAppSelector(selectRiskSelection);
   const {save} = useActions({...riskSelectorActions});
-  const risksValues = Object.values(risks_levels);
-  const risks: Record<string, Record<string, number>> = risks_levels;
+  // Save JSON to const for typing purposes
+  const risks: Risk = risks_levels;
+  const riskValues: Record<Category, Data>[] = Object.values(risks);
   const [data, setData] = useState<Data[]>();
+  const [switchView, setSwitchView] = useState<boolean>(false);
 
-  const width = 450,
-    height = 450,
-    margin = 40;
-  const radius = Math.min(width, height) / 2 - margin;
+  // Donut dimensions
+  const width = 350,
+    height = 350;
+  const radius = Math.min(width, height) / 2;
 
   useEffect(() => {
     if (typeof riskSelection !== 'undefined') {
-      setData(
-        Object.keys(risks[riskSelection]).map((k: string) => ({
-          label: k,
-          value: risks[riskSelection][k],
-        }))
-      );
+      setData(Object.values(risks[riskSelection]));
     }
   }, [riskSelection, risks]);
 
@@ -81,51 +76,68 @@ export function RiskSelector(props: Props): JSX.Element {
         </ul>
       </div>
       <Grid className={style.tableContainer} centerAlign>
-        <table className={style.table}>
-          <tbody>
-            <tr>
-              <th>Risk</th>
-              <th>Bonds %</th>
-              <th>Large Cap %</th>
-              <th>Mid Cap %</th>
-              <th>Foreign %</th>
-              <th>Small Cap %</th>
-            </tr>
-            {risksValues.map((risk: Risk, i: number) => (
-              <tr
-                className={
-                  Number(riskSelection) === i + 1 ? style.selected : ''
-                }
-                key={i}
-              >
-                <td>{i + 1}</td>
-                <td>{risk.Bonds}</td>
-                <td>{risk['Large Cap']}</td>
-                <td>{risk['Mid Caps']}</td>
-                <td>{risk.Foreign}</td>
-                <td>{risk['Small Cap']}</td>
+        {!switchView && (
+          <table className={style.table} role="table">
+            <tbody>
+              <tr>
+                <th>Risk</th>
+                <th>Bonds %</th>
+                <th>Large Cap %</th>
+                <th>Mid Cap %</th>
+                <th>Foreign %</th>
+                <th>Small Cap %</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        {data && (
-          <PieSVG
+              {riskValues.map((risk: Record<Category, Data>, i) => (
+                <tr
+                  className={
+                    Number(riskSelection) === i + 1 ? style.selected : ''
+                  }
+                  key={i}
+                >
+                  <td>{i + 1}</td>
+                  <td>{risk.bonds.value}</td>
+                  <td>{risk.largeCap.value}</td>
+                  <td>{risk.midCap.value}</td>
+                  <td>{risk.foreign.value}</td>
+                  <td>{risk.smallCap.value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+        {data && switchView && (
+          <DonutSVG
             data={data}
             width={width}
             height={height}
-            innerRadius={100}
+            innerRadius={70} // inside hole
             outerRadius={radius}
           />
         )}
       </Grid>
-      <Grid centerAlign>
-        <Button
-          isDisabled={!riskSelection}
-          size={Sizes.LARGE}
-          onClick={props.continue}
-        >
-          Continue
-        </Button>
+      <Grid centerAlign className={style.buttons}>
+        <Cell small={12} medium={6}>
+          <Grid centerAlign>
+            <Button
+              isDisabled={!riskSelection}
+              size={Sizes.LARGE}
+              onClick={props.continue}
+            >
+              Continue
+            </Button>
+          </Grid>
+        </Cell>
+        <Cell small={12} medium={6} centerAlign>
+          <Grid centerAlign>
+            <Button
+              isDisabled={!riskSelection}
+              size={Sizes.LARGE}
+              onClick={() => setSwitchView(!switchView)}
+            >
+              Switch view
+            </Button>
+          </Grid>
+        </Cell>
       </Grid>
     </div>
   );

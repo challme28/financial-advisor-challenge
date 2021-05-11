@@ -29,11 +29,11 @@ div.portfolioContainer {
 
       div.currentInvestmentContainer {
         padding-bottom: 20px;
+        text-align: center;
 
         p.currentInvestmentLabel {
           font-size: 22px;
           font-weight: 600;
-          margin-bottom: 0;
         }
 
         button {
@@ -81,12 +81,17 @@ div.portfolioContainer {
               input.red {
                 color: red;
               }
+
+              input.blue {
+                color: blue;
+              }
             }
           }
         }
 
         div.riskCalculatorTransfer {
           display: flex;
+          min-height: 94px;
 
           div.riskCalculatorTransferWrap {
             flex-grow: 1;
