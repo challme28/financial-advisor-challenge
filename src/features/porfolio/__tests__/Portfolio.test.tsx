@@ -1,9 +1,9 @@
 import React from 'react';
 import {render, screen} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {Portfolio} from '../Portfolio';
 import * as reduxHooks from '../../../utils/redux/hooks';
 import risk_levels from '../../../local/risk_levels.json';
-import userEvent from '@testing-library/user-event';
 
 describe('Portfolio', () => {
   describe('risk table w/o risk selection', () => {

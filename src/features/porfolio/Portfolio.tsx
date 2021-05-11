@@ -30,6 +30,7 @@ export function Portfolio(): JSX.Element {
 
   const [disabledRebalance, setDisabledRebalance] = useState<boolean>(true);
 
+  // positive and negative values to show and operate with
   const [diffPortfolio, setDiffPortfolio] = useState<
     Record<Category, [string, number]>
   >({
@@ -40,6 +41,7 @@ export function Portfolio(): JSX.Element {
     smallCap: [' ', 0],
   });
 
+  // rebalanced portfolio for risk level
   const [newPortfolio, setNewPortfolio] = useState<Record<Category, string>>({
     bonds: ' ',
     largeCap: ' ',
@@ -50,7 +52,7 @@ export function Portfolio(): JSX.Element {
 
   const [message, setMessage] = useState<[boolean, string]>([false, '']);
 
-  const updateCategory = (e: ChangeEvent<HTMLInputElement>) =>
+  const updateUserPortfolio = (e: ChangeEvent<HTMLInputElement>) =>
     setUserPortfolio({
       ...userPortfolio,
       [e.target.name]: e.target.value,
@@ -159,7 +161,7 @@ export function Portfolio(): JSX.Element {
         <input
           id="setBonds"
           name="bonds"
-          onChange={updateCategory}
+          onChange={updateUserPortfolio}
           type="text"
         />
       </Cell>
@@ -196,7 +198,7 @@ export function Portfolio(): JSX.Element {
         <input
           id="setLargeCap"
           name="largeCap"
-          onChange={updateCategory}
+          onChange={updateUserPortfolio}
           type="text"
         />
       </Cell>
@@ -235,7 +237,7 @@ export function Portfolio(): JSX.Element {
         <input
           id="setMidCap"
           name="midCap"
-          onChange={updateCategory}
+          onChange={updateUserPortfolio}
           type="text"
         />
       </Cell>
@@ -272,7 +274,7 @@ export function Portfolio(): JSX.Element {
         <input
           id="setForeign"
           name="foreign"
-          onChange={updateCategory}
+          onChange={updateUserPortfolio}
           type="text"
         />
       </Cell>
@@ -311,7 +313,7 @@ export function Portfolio(): JSX.Element {
         <input
           id="setSmallCap"
           name="smallCap"
-          onChange={updateCategory}
+          onChange={updateUserPortfolio}
           type="text"
         />
       </Cell>
@@ -401,7 +403,7 @@ export function Portfolio(): JSX.Element {
                 </p>
               </div>
             </Cell>
-
+            {/*Duplicate section for mobile*/}
             <Cell hideFor="medium" className={style.riskCalculatorInputLabels}>
               Recommended transfers
             </Cell>

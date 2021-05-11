@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Cell, Grid, Sizes} from 'react-foundation';
-import PieSVG from './Pie/PieSVG';
+import DonutSVG from './Donut/DonutSVG';
 
 import {useAppSelector} from '../../utils/redux/hooks';
 import {useActions} from '../../utils/redux';
@@ -28,11 +28,13 @@ interface Props {
 export function RiskSelector(props: Props): JSX.Element {
   const riskSelection = useAppSelector(selectRiskSelection);
   const {save} = useActions({...riskSelectorActions});
+  // Save JSON to const for typing purposes
   const risks: Risk = risks_levels;
   const riskValues: Record<Category, Data>[] = Object.values(risks);
   const [data, setData] = useState<Data[]>();
   const [switchView, setSwitchView] = useState<boolean>(false);
 
+  // Donut dimensions
   const width = 350,
     height = 350;
   const radius = Math.min(width, height) / 2;
@@ -75,7 +77,7 @@ export function RiskSelector(props: Props): JSX.Element {
       </div>
       <Grid className={style.tableContainer} centerAlign>
         {!switchView && (
-          <table className={style.table}>
+          <table className={style.table} role="table">
             <tbody>
               <tr>
                 <th>Risk</th>
@@ -104,11 +106,11 @@ export function RiskSelector(props: Props): JSX.Element {
           </table>
         )}
         {data && switchView && (
-          <PieSVG
+          <DonutSVG
             data={data}
             width={width}
             height={height}
-            innerRadius={70}
+            innerRadius={70} // inside hole
             outerRadius={radius}
           />
         )}

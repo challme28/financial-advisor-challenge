@@ -27,7 +27,7 @@ const Arc = ({
   </g>
 );
 
-const Pie = (props: {
+const Donut = (props: {
   innerRadius: number;
   outerRadius: number;
   data: Data[];
@@ -64,4 +64,4 @@ const Pie = (props: {
   );
 };
 
-export default Pie;
+export default Donut;

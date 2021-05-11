@@ -48,6 +48,8 @@ export const verifyUserPortfolio = (
       userPortfolio.smallCap ? userPortfolio.smallCap : undefined
     ),
   };
+
+  // Verify if portfolio's categories is a number and positive
   if (
     isNaN(userPortfolioN.bonds) ||
     userPortfolioN.bonds < 0 ||
@@ -117,6 +119,7 @@ export const calculateDiffPortfolio = (
         100
     ) / 100;
 
+  // Return tuple for ui and data manipulation
   return {
     bonds: [`${diffB < 0 ? '' : '+'}${diffB}`, diffB],
     largeCap: [`${diffL < 0 ? '' : '+'}${diffL}`, diffL],
@@ -135,6 +138,7 @@ export const sortPortfolio = (
 ): Record<'positiveArray' | 'negativeArray', Data[]> => {
   const negativeArray: Data[] = [];
   const positiveArray: Data[] = [];
+  // Divide portfolio in negative and positive values
   [
     {label: 'Bonds', value: diffBonds},
     {label: 'Large Cap', value: diffLargeCap},
