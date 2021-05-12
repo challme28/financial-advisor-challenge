@@ -1,4 +1,9 @@
 # Financial Advisor Beta
+[![Build Status](https://travis-ci.com/challme28/financial-advisor-challenge.svg?branch=master)](https://travis-ci.com/challme28/financial-advisor-challenge)
+[![Coverage Status](https://coveralls.io/repos/github/challme28/financial-advisor-challenge/badge.svg?branch=master)](https://coveralls.io/github/challme28/financial-advisor-challenge?branch=master)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+
+
 This project is a `react` based web application comply with a challenge provided by [Oktana](https://www.oktana.com/). It uses `redux` handle internal state management and `react-redux` to obtain desired sections of our state three.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
