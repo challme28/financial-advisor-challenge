@@ -46,7 +46,7 @@ div.riskSelectorContainer {
         margin: 2px;
         font-size: 28px;
         cursor: pointer;
-        word-break: unset;
+        word-break: initial;
 
         &.selected {
           background-color: rgb(230, 255, 63);
